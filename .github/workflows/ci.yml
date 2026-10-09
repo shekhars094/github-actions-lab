@@ -1,0 +1,25 @@
+name: Node.js CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+      - uses: actions/checkout@v6
+
+      - name: Set up nodejs
+        uses: actions/checkout@v4
+        with:
+          node-version: 22
+      
+      - name: Run tests
+        run: npm test
