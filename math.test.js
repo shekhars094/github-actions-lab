@@ -6,5 +6,5 @@ function add(a, b) {
 }
 
 test("adds two numbers", () => {
-    assert.equal(add(2, 3), 6);
+    assert.equal(add(2, 3), 5);
 });
