@@ -12,29 +12,65 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-
-  verify:
-    name: Typecheck, test, build
+  typecheck:
+    name: TypeScript typecheck
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-      - name: Set up nodejs
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
-      - name: Install depencies
-        run: npm ci
+      - run: npm ci
+      - run: npm run typecheck
 
-      - name: check Typescript types
-        run: npm run typecheck
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
 
-      - name: Run tests
-        run: npm test
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20, 22, 24]
 
-      - name: Build production code
-        run: npm run build
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - run: npm ci
+      - run: npm test
+
+  lint:
+    name: biome lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run lint
+
+  build:
+    name: Production build
+    needs: [typecheck, test, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
