@@ -1,0 +1,46 @@
+
+name: Build and Verify Artifact
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Upload compiled application
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-app
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  verify-artifact:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download compiled application
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-app
+          path: dist/
+
+      - name: Verify compiled output
+        run: test -n "$(find dist -type f -name '*.js' -print -quit)"
