@@ -79,4 +79,4 @@ jobs:
     name: deploy
     env:
       DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
-    run:
+    run: ./scripts/deploy.sh
