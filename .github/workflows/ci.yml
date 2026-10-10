@@ -76,8 +76,14 @@ jobs:
       - run: npm run build
   
   deploy:
-    name: deploy
+    name: Deploy application
+    needs: [build]
     runs-on: ubuntu-latest
     env:
       DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
-    run: ./scripts/deploy.sh
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        
+      - name: Run deployment script
+        run: ./scripts/deploy.sh
