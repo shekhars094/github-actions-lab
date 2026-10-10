@@ -74,3 +74,9 @@ jobs:
 
       - run: npm ci
       - run: npm run build
+  
+  deploy:
+    name: deploy
+    env:
+      DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+    run:
